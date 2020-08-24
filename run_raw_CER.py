@@ -48,7 +48,7 @@ dataset = path+filename
 #           'hidden_dim': [500, 500, 2000, 10],
 #           'diminishing': False}
 
-config = {'Init': 'mnist_pre.pkl.gz',
+config = {'Init': ' ',
           'lbd':  1,  # reconstruction
           'beta': 1,
           'output_dir': 'MNIST_results',
