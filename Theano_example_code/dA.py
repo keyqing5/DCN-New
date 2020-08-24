@@ -80,7 +80,7 @@ class dA(object):
         numpy_rng,
         theano_rng=None,
         input=None,
-        n_visible=784,
+        n_visible=48,
         n_hidden=500,
         W=None,
         bhid=None,

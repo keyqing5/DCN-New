@@ -25,6 +25,8 @@ from sklearn.cluster import KMeans
 from Theano_example_code.dA import dA
 from sklearn.preprocessing import scale, normalize
 
+import pdb
+
 floatX = theano.config.floatX
 class dA2(dA):
     # overload the original function in dA class
@@ -34,7 +36,7 @@ class dA2(dA):
         numpy_rng,
         theano_rng=None,
         input=None,
-        n_visible=784,
+        n_visible=48,
         n_hidden=500,
         W=None,
         bhid=None,
@@ -251,7 +253,7 @@ class SdC(object):
         numpy_rng,
         theano_rng=None,
         input = None,
-        n_ins=784,
+        n_ins=48,
         lbd = 1,
         beta = 1,
         hidden_layers_sizes=[1000, 200, 10],
@@ -648,11 +650,17 @@ def load_data_shared(dataset, batch_size):
     Load the dataset and save it as shared-variable to be used by Theano
 
     """
-    with gzip.open(dataset, 'rb') as f:
-        train_x, train_y = cPickle.load(f)
+    # with gzip.open(dataset, 'rb') as f:
+    #     train_x, train_y = cPickle.load(f)
+    # get the arrays for train and test
+    x_train = numpy.loadtxt("/home/liangz/data/1/x_train.csv", dtype=numpy.float, delimiter=' ')
+    x_test = numpy.loadtxt("/home/liangz/data/1/x_test.csv", dtype=numpy.float, delimiter=' ')
+    x_train = x_train[:,2:]
+    x_test = x_test[:,2:]
+    # stack the 2 ndarray
+    train_x = numpy.vstack((x_train, x_test))
     N = train_x.shape[0] - train_x.shape[0] % batch_size
-    train_x = train_x[0: N]
-    train_y = train_y[0: N]
+    # train_x = train_x[0: N]
 
     # shuffling
     numpy.random.seed(0)
@@ -660,24 +668,24 @@ def load_data_shared(dataset, batch_size):
     train_x = train_x[idx] * 5.1  # for MNIST
 #    train_x = normalize(train_x)
 #    train_x = train_x
-    train_y = train_y[idx]
+#     train_y = train_y[idx]
 
     # change sparse matrix into full, to be compatible with CUDA and Theano
     if scipy.sparse.issparse(train_x):
         train_x = train_x.toarray()
     if train_x.dtype != 'float32':
         train_x = train_x.astype(numpy.float32)
-    if train_y.dtype != 'int32':
-        train_y = train_y.astype(numpy.int32)
-    if train_y.ndim > 1:
-        train_y = numpy.squeeze(train_y)
+    # if train_y.dtype != 'int32':
+    #     train_y = train_y.astype(numpy.int32)
+    # if train_y.ndim > 1:
+    #     train_y = numpy.squeeze(train_y)
 
-    data_x, data_y = shared_dataset((train_x, train_y))
-    rval = [(data_x, data_y), 0, 0]
+    data_x = shared_dataset((train_x))
+    rval = [(data_x), 0, 0]
     return rval
 
 
-def shared_dataset(data_xy, borrow=True):
+def shared_dataset(data_x, borrow=True):
         """ Function that loads the dataset into shared variables
 
         The reason we store our dataset in shared variables is to allow
@@ -686,13 +694,13 @@ def shared_dataset(data_xy, borrow=True):
         is needed (the default behaviour if the data is not in a shared
         variable) would lead to a large decrease in performance.
         """
-        data_x, data_y = data_xy
+        # data_x, data_y = data_xy
         shared_x = theano.shared(numpy.asarray(data_x,
                                                dtype=floatX),
                                  borrow=borrow)
-        shared_y = theano.shared(numpy.asarray(data_y,
-                                               dtype=floatX),
-                                 borrow=borrow)
+        # shared_y = theano.shared(numpy.asarray(data_y,
+        #                                        dtype=floatX),
+        #                          borrow=borrow)
         # When storing data on the GPU it has to be stored as floats
         # therefore we will store the labels as ``floatX`` as well
         # (``shared_y`` does exactly that). But during our computations
@@ -701,7 +709,7 @@ def shared_dataset(data_xy, borrow=True):
         # ``shared_y`` we will have to cast it to int. This little hack
         # lets ous get around this issue
         # return shared_x, T.cast(shared_y, 'int32')
-        return shared_x, shared_y
+        return shared_x#, shared_y
 
 
 def batch_km(data, center, count):
@@ -847,10 +855,10 @@ def test_SdC(Init='', lbd=.01, output_dir='MNIST_results', save_file = '',
 
     datasets = load_data_shared(dataset, batch_size)
     working_dir = os.getcwd()
-    train_set_x, train_set_y = datasets[0]
+    train_set_x = datasets[0]
     inDim = train_set_x.get_value().shape[1]
-    label_true = numpy.squeeze(numpy.int32(train_set_y.
-                                           get_value(borrow=True)))
+    # label_true = numpy.squeeze(numpy.int32(train_set_y.
+    #                                        get_value(borrow=True)))
     index = T.lscalar()
     x = T.matrix('x')
 
@@ -1020,8 +1028,8 @@ def test_SdC(Init='', lbd=.01, output_dir='MNIST_results', save_file = '',
     hidden_array = numpy.reshape(hidden_array,
                                  (hidden_size[0] * hidden_size[1],
                                   hidden_size[2]))
-    with gzip.open('hidden_init.pkl.gz', 'wb') as f:
-        cPickle.dump((hidden_array, label_true), f, protocol=0)
+    # with gzip.open('hidden_init.pkl.gz', 'wb') as f:
+    #     cPickle.dump((hidden_array, label_true), f, protocol=0)
 #    hidden_array  = normalize(hidden_array, norm='l2', axis=1)
 
     idx, centers = init_cluster(hidden_array)
@@ -1032,19 +1040,19 @@ def test_SdC(Init='', lbd=.01, output_dir='MNIST_results', save_file = '',
     center_shared = theano.shared(numpy.zeros((batch_size, hidden_dim[-1]),
                                               dtype=numpy.float32),
                                   borrow=True)
-    nmi = metrics.normalized_mutual_info_score(label_true, idx)
-    print >> sys.stderr, ('Initial NMI for deep clustering: %.2f' % (nmi))
+    # nmi = metrics.normalized_mutual_info_score(label_true, idx)
+    # print >> sys.stderr, ('Initial NMI for deep clustering: %.2f' % (nmi))
+    #
+    # ari = metrics.adjusted_rand_score(label_true, idx)
+    # print >> sys.stderr, ('ARI for deep clustering: %.2f' % (ari))
 
-    ari = metrics.adjusted_rand_score(label_true, idx)
-    print >> sys.stderr, ('ARI for deep clustering: %.2f' % (ari))
-
-    try:
-        ac = acc(idx, label_true)
-    except AssertionError:
-        ac = 0
-        print('Number of predicted cluster mismatch with ground truth.')
-
-    print >> sys.stderr, ('ACC for deep clustering: %.2f' % (ac))
+    # try:
+    #     ac = acc(idx, label_true)
+    # except AssertionError:
+    #     ac = 0
+    #     print('Number of predicted cluster mismatch with ground truth.')
+    #
+    # print >> sys.stderr, ('ACC for deep clustering: %.2f' % (ac))
     lr_shared = theano.shared(numpy.asarray(finetune_lr,
                                             dtype='float32'),
                               borrow=True)
@@ -1065,8 +1073,8 @@ def test_SdC(Init='', lbd=.01, output_dir='MNIST_results', save_file = '',
     done_looping = False
     epoch = 0
 
-    res_metrics = numpy.zeros((training_epochs/5 + 1, 3), dtype=numpy.float32)
-    res_metrics[0] = numpy.array([nmi, ari, ac])
+    # res_metrics = numpy.zeros((training_epochs/5 + 1, 3), dtype=numpy.float32)
+    # res_metrics[0] = numpy.array([nmi, ari, ac])
 
     count = 100*numpy.ones(nClass, dtype=numpy.int)
     while (epoch < training_epochs) and (not done_looping):
@@ -1121,7 +1129,7 @@ def test_SdC(Init='', lbd=.01, output_dir='MNIST_results', save_file = '',
         if epoch % 10 == 0:
 #            if diminishing is True:
 #                finetune_lr /= 5
-            nmi = metrics.normalized_mutual_info_score(label_true, idx)
+#             nmi = metrics.normalized_mutual_info_score(label_true, idx)
             # print >> sys.stderr, ('NMI before KMeans: %.2f' % nmi)
 
             hidden_val = []
@@ -1146,16 +1154,16 @@ def test_SdC(Init='', lbd=.01, output_dir='MNIST_results', save_file = '',
             idx = idx_new
 
 #         evaluate the clustering performance every 5 epoches
-        if epoch % 5 == 0:
-            nmi = metrics.normalized_mutual_info_score(label_true, idx)
-            ari = metrics.adjusted_rand_score(label_true, idx)
-            try:
-                ac = acc(idx, label_true)
-            except AssertionError:
-                ac = 0
-                print('Number of predicted cluster' +
-                      'mismatch with ground truth.')
-            res_metrics[epoch/5] = numpy.array([nmi, ari, ac])
+#         if epoch % 5 == 0:
+#             nmi = metrics.normalized_mutual_info_score(label_true, idx)
+#             ari = metrics.adjusted_rand_score(label_true, idx)
+#             try:
+#                 ac = acc(idx, label_true)
+#             except AssertionError:
+#                 ac = 0
+#                 print('Number of predicted cluster' +
+#                       'mismatch with ground truth.')
+#             res_metrics[epoch/5] = numpy.array([nmi, ari, ac])
 
     # get the hidden values, to make a plot
     hidden_val = []
@@ -1167,8 +1175,8 @@ def test_SdC(Init='', lbd=.01, output_dir='MNIST_results', save_file = '',
                                  (hidden_size[0] *
                                   hidden_size[1], hidden_size[2]))
 
-    with gzip.open('hidden_final.pkl.gz', 'wb') as f:
-        cPickle.dump((hidden_array, label_true), f, protocol=0)
+    # with gzip.open('hidden_final.pkl.gz', 'wb') as f:
+    #     cPickle.dump((hidden_array, label_true), f, protocol=0)
 
     idx, centers = init_cluster(hidden_array)
 #    err = numpy.mean(d)
@@ -1176,19 +1184,19 @@ def test_SdC(Init='', lbd=.01, output_dir='MNIST_results', save_file = '',
     end_time = timeit.default_timer()
     ypred = idx
 
-    nmi = metrics.normalized_mutual_info_score(label_true, ypred)
-    print >> sys.stderr, ('NMI for deep clustering: %.2f' % (nmi))
-
-    ari = metrics.adjusted_rand_score(label_true, ypred)
-    print >> sys.stderr, ('ARI for deep clustering: %.2f' % (ari))
-
-    try:
-        ac = acc(ypred, label_true)
-    except AssertionError:
-        ac = 0
-        print('Number of predicted cluster mismatch with ground truth.')
-
-    print >> sys.stderr, ('ACC for deep clustering: %.2f' % (ac))
+    # nmi = metrics.normalized_mutual_info_score(label_true, ypred)
+    # print >> sys.stderr, ('NMI for deep clustering: %.2f' % (nmi))
+    #
+    # ari = metrics.adjusted_rand_score(label_true, ypred)
+    # print >> sys.stderr, ('ARI for deep clustering: %.2f' % (ari))
+    #
+    # try:
+    #     ac = acc(ypred, label_true)
+    # except AssertionError:
+    #     ac = 0
+    #     print('Number of predicted cluster mismatch with ground truth.')
+    #
+    # print >> sys.stderr, ('ACC for deep clustering: %.2f' % (ac))
 
     config = {'lbd': lbd,
               'beta': beta,
@@ -1201,13 +1209,13 @@ def test_SdC(Init='', lbd=.01, output_dir='MNIST_results', save_file = '',
               'batch_size': batch_size,
               'nClass': nClass,
               'hidden_dim': hidden_dim}
-    results = {'result': res_metrics}
+    # results = {'result': res_metrics}
 
     network = [param.get_value() for param in sdc.W] + \
               [param.get_value() for param in sdc.bias]
 
     package = {'config': config,
-               'results': results,
+               # 'results': results,
                'network': network}
     with gzip.open(save_file, 'wb') as f:
         cPickle.dump(package, f, protocol=cPickle.HIGHEST_PROTOCOL)
@@ -1220,10 +1228,12 @@ def test_SdC(Init='', lbd=.01, output_dir='MNIST_results', save_file = '',
     # clear variables
     train_set_x.set_value(numpy.zeros((0,)*train_set_x.get_value().ndim,
                                       dtype=train_set_x.get_value().dtype))
-    train_set_y.set_value(numpy.zeros((0,)*train_set_y.get_value().ndim,
-                                      dtype=train_set_y.get_value().dtype))
+    # train_set_y.set_value(numpy.zeros((0,)*train_set_y.get_value().ndim,
+    #                                   dtype=train_set_y.get_value().dtype))
 
-    return res_metrics
+    pdb.set_trace()
+
+    return ypred
 
 if __name__ == '__main__':
     # run experiment with raw MNIST data
