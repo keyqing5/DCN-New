@@ -331,6 +331,8 @@ class SdC(object):
 #                                      bhid=Param_init[5*i+1],
 #                                      bvis=Param_init[5*i+2])
 
+            pdb.set_trace()
+
             self.dA_layers.append(dA_layer)
 
             # single element, cannot use list.extend()
