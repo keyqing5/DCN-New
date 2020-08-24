@@ -474,7 +474,6 @@ class SdC(object):
 
         '''
 
-        pdb.set_trace()
         train_set_x = datasets[0]
 
         index = T.lscalar('index')  # index to a [mini]batch
@@ -486,6 +485,9 @@ class SdC(object):
         mu,
         learning_rate=learning_rate
         )
+
+        pdb.set_trace()
+
         minibatch = train_set_x[
                     index * batch_size: (index + 1) * batch_size
                 ]
