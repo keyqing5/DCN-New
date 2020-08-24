@@ -331,8 +331,6 @@ class SdC(object):
 #                                      bhid=Param_init[5*i+1],
 #                                      bvis=Param_init[5*i+2])
 
-            pdb.set_trace()
-
             self.dA_layers.append(dA_layer)
 
             # single element, cannot use list.extend()
@@ -476,7 +474,8 @@ class SdC(object):
 
         '''
 
-        (train_set_x, train_set_y) = datasets[0]
+        pdb.set_trace()
+        train_set_x = datasets[0]
 
         index = T.lscalar('index')  # index to a [mini]batch
         minibatch = T.fmatrix('minibatch')
