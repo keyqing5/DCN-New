@@ -103,7 +103,6 @@ class dA2(dA):
                 numpy.float32(numpy.random.randn(n_visible, n_hidden))
 
             )
-            pdb.set_trace()
         else:
             initial_W = W
         W = theano.shared(value=initial_W, name='W', borrow=True)
