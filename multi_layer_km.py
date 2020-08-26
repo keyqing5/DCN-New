@@ -513,6 +513,7 @@ class SdC_KM(SdC):
         # note : we sum over the size of a datapoint; if we are using
         #        minibatches, L will be a vector, withd one entry per
         #        example in minibatch
+        pdb.set_trace()
         network_output = self.get_output()
         temp = T.pow(center - network_output, 2)
 
