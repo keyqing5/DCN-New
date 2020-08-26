@@ -513,7 +513,7 @@ class SdC_KM(SdC):
         # note : we sum over the size of a datapoint; if we are using
         #        minibatches, L will be a vector, withd one entry per
         #        example in minibatch
-        pdb.set_trace()
+        # pdb.set_trace()
         network_output = self.get_output()
         temp = T.pow(center - network_output, 2)
 
@@ -1113,7 +1113,7 @@ def test_SdC(Init='', lbd=.01, output_dir='MNIST_results', save_file = '',
             d.append(cost[1])
             e.append(cost[2])
             if math.isnan(cost[0]*cost[1]*cost[2]):
-                pdb.set_trace()
+                # pdb.set_trace()
 #            f.append(cost[3])
 #            g.append(cost[4])
 
