@@ -26,6 +26,7 @@ from Theano_example_code.dA import dA
 from sklearn.preprocessing import scale, normalize
 
 import pdb
+import math
 
 floatX = theano.config.floatX
 class dA2(dA):
@@ -485,8 +486,6 @@ class SdC(object):
         mu,
         learning_rate=learning_rate
         )
-
-        pdb.set_trace()
 
         minibatch = train_set_x[
                     index * batch_size: (index + 1) * batch_size
@@ -1112,6 +1111,8 @@ def test_SdC(Init='', lbd=.01, output_dir='MNIST_results', save_file = '',
             c.append(cost[0])
             d.append(cost[1])
             e.append(cost[2])
+            if math.isnan(cost[0]*cost[1]*cost[2]):
+                pdb.set_trace()
 #            f.append(cost[3])
 #            g.append(cost[4])
 
