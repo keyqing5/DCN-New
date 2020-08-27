@@ -61,7 +61,7 @@ config = {'Init': ' ',
           'dataset': dataset,
           'batch_size': 256,
           'nClass': K,
-          'hidden_dim': [40, 40, 160, 10],
+          'hidden_dim': [24, 24, 36, 10],
           'diminishing': False}
 
 results = []
