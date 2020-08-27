@@ -59,7 +59,7 @@ config = {'Init': ' ',
           'finetune_lr': 0.0001,
           'training_epochs': 50,
           'dataset': dataset,
-          'batch_size': 256,
+          'batch_size': 25,
           'nClass': K,
           'hidden_dim': [24, 24, 36, 10],
           'diminishing': False}
