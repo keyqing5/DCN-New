@@ -500,6 +500,7 @@ class SdC(object):
             },
             name='train'
         )
+        pdb.set_trace()
         return train_fn
 
 class SdC_KM(SdC):
@@ -556,7 +557,6 @@ class SdC_KM(SdC):
 
 #        grad_ = T.stack(*grad_values)
 #        param_ = T.stack(*param_norm)
-        pdb.set_trace()
         return ((cost1, cost2, cost3), updates)
 
 
