@@ -257,7 +257,7 @@ class SdC(object):
         n_ins=48,
         lbd = 1,
         beta = 1,
-        hidden_layers_sizes=[1000, 200, 10],
+        hidden_layers_sizes=[36, 24, 10],
         corruption_levels=[0, 0, 0],
         Param_init = None
     ):
