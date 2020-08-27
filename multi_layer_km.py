@@ -500,7 +500,6 @@ class SdC(object):
             },
             name='train'
         )
-        pdb.set_trace()
         return train_fn
 
 class SdC_KM(SdC):
@@ -1102,6 +1101,7 @@ def test_SdC(Init='', lbd=.01, output_dir='MNIST_results', save_file = '',
                                     (minibatch_index + 1) * batch_size]])
 #            lr_shared.set_value( numpy.float32(finetune_lr/numpy.sqrt(epoch)) )
             cost = train_fn(minibatch_index)
+            pdb.set_trace()
             hidden_val = out_sdc(minibatch_index) # get the hidden value, to update KM
             # Perform mini-batch KM
             temp_idx, centers, count = batch_km(hidden_val, centers, count)
