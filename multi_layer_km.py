@@ -38,7 +38,7 @@ class dA2(dA):
         theano_rng=None,
         input=None,
         n_visible=48,
-        n_hidden=500,
+        n_hidden=24,
         W=None,
         bhid=None,
         bvis=None
@@ -798,7 +798,7 @@ def arguments():
 def test_SdC(Init='', lbd=.01, output_dir='MNIST_results', save_file = '',
              beta=1, finetune_lr=0.005, mu=0.9, pretraining_epochs=50,
              pretrain_lr_base=0.001, training_epochs=150, dataset='toy.pkl.gz',
-             batch_size=20, nClass=4, hidden_dim=[100, 50, 2],
+             batch_size=20, nClass=4, hidden_dim=[36, 18, 2],
              diminishing=True, clusterModel='KM', step_size=20000,
              gamma=0.1, mom_burnin=1000, seed=0):
     """
