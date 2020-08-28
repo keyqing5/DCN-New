@@ -257,7 +257,7 @@ class SdC(object):
         n_ins=128,
         lbd = 1,
         beta = 1,
-        hidden_layers_sizes=[36, 24, 10],
+        hidden_layers_sizes=[100, 50, 25, 10],
         corruption_levels=[0, 0, 0],
         Param_init = None
     ):
@@ -660,7 +660,6 @@ def load_data_shared(dataset, batch_size):
     # x_test = numpy.loadtxt("/home/liangz/data/1/x_test.csv", dtype=numpy.float, delimiter=' ')
     x_train = numpy.load("/home/liangz/result/feature2_train.npy")
     x_test = numpy.load("/home/liangz/result/feature2_test.npy")
-    pdb.set_trace()
     # x_train = x_train[:,2:]
     # x_test = x_test[:,2:]
     # stack the 2 ndarray
@@ -801,7 +800,7 @@ def arguments():
 def test_SdC(Init='', lbd=.01, output_dir='MNIST_results', save_file = '',
              beta=1, finetune_lr=0.005, mu=0.9, pretraining_epochs=50,
              pretrain_lr_base=0.001, training_epochs=150, dataset='toy.pkl.gz',
-             batch_size=20, nClass=10, hidden_dim=[36, 18, 2],
+             batch_size=20, nClass=10, hidden_dim=[100, 50, 25, 10, 2],
              diminishing=True, clusterModel='KM', step_size=20000,
              gamma=0.1, mom_burnin=1000, seed=0):
     """
