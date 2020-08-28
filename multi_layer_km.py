@@ -257,7 +257,7 @@ class SdC(object):
         n_ins=48,
         lbd = 1,
         beta = 1,
-        hidden_layers_sizes=[36, 24, 4],
+        hidden_layers_sizes=[36, 24, 10],
         corruption_levels=[0, 0, 0],
         Param_init = None
     ):
@@ -994,7 +994,7 @@ def test_SdC(Init='', lbd=.01, output_dir='MNIST_results', save_file = '',
     ########################
     def init_cluster(data):
         if clusterModel == 'KM':
-            km = KMeans(n_clusters=nClass, n_init=4)
+            km = KMeans(n_clusters=nClass, n_init=10)
             km.fit(data)
             idx = km.labels_
             centers = km.cluster_centers_
