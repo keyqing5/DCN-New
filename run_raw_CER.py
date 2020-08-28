@@ -18,7 +18,7 @@ from sklearn import metrics
 from multi_layer_km import test_SdC
 from cluster_acc import acc
 
-K = 4
+K = 10
 trials = 1
 
 filename = 'mnist_dcn.pkl.gz'
@@ -61,7 +61,7 @@ config = {'Init': ' ',
           'dataset': dataset,
           'batch_size': 25,
           'nClass': K,
-          'hidden_dim': [40, 60, 40, 20, 10],
+          'hidden_dim': [40, 40, 20, 10],
           'diminishing': False}
 
 results = []
