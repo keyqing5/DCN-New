@@ -656,8 +656,10 @@ def load_data_shared(dataset, batch_size):
     # with gzip.open(dataset, 'rb') as f:
     #     train_x, train_y = cPickle.load(f)
     # get the arrays for train and test
-    x_train = numpy.loadtxt("/home/liangz/data/1/x_train.csv", dtype=numpy.float, delimiter=' ')
-    x_test = numpy.loadtxt("/home/liangz/data/1/x_test.csv", dtype=numpy.float, delimiter=' ')
+    # x_train = numpy.loadtxt("/home/liangz/data/1/x_train.csv", dtype=numpy.float, delimiter=' ')
+    # x_test = numpy.loadtxt("/home/liangz/data/1/x_test.csv", dtype=numpy.float, delimiter=' ')
+    x_train = numpy.load("/home/liangz/result/feature2_train.npy")
+    x_test = numpy.load("/home/liangz/result/feature2_test.npy")
     x_train = x_train[:,2:]
     x_test = x_test[:,2:]
     # stack the 2 ndarray
