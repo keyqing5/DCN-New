@@ -38,7 +38,7 @@ class dA2(dA):
         theano_rng=None,
         input=None,
         n_visible=48,
-        n_hidden=36,
+        n_hidden=30,
         W=None,
         bhid=None,
         bvis=None
