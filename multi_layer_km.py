@@ -660,8 +660,9 @@ def load_data_shared(dataset, batch_size):
     # x_test = numpy.loadtxt("/home/liangz/data/1/x_test.csv", dtype=numpy.float, delimiter=' ')
     x_train = numpy.load("/home/liangz/result/feature2_train.npy")
     x_test = numpy.load("/home/liangz/result/feature2_test.npy")
-    x_train = x_train[:,2:]
-    x_test = x_test[:,2:]
+    pdb.set_trace()
+    # x_train = x_train[:,2:]
+    # x_test = x_test[:,2:]
     # stack the 2 ndarray
     train_x = numpy.vstack((x_train, x_test))
     N = train_x.shape[0] - train_x.shape[0] % batch_size
